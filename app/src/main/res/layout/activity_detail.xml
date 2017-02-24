@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:diagonal="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#CCC"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainActivity">
+
+    <com.github.florent37.diagonallayout.DiagonalLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        diagonal:diagonal_angle="10"
+        diagonal:diagonal_position="bottom"
+        diagonal:diagonal_direction="left"
+        android:elevation="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher" />
+
+    </com.github.florent37.diagonallayout.DiagonalLayout>
+</RelativeLayout>
