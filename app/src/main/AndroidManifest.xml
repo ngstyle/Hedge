@@ -3,9 +3,11 @@
     package="me.chon.hedge">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"
+        android:name=".HedgeApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -19,6 +21,9 @@
         </activity>
 
         <activity android:name="me.chon.hedge.activity.DetailActivity" />
+
+        <service android:name=".aidl.MessengerService" />
+        <!--android:process=":test"-->
     </application>
 
 </manifest>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/tv_app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="WeChat"
+        android:textSize="12sp" />
+
+
+    <TextView
+        android:id="@+id/tv_app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_app_name"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:maxLines="2"
+        android:text="2.3.5"
+        android:textSize="12sp" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_app_name"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_toRightOf="@id/logo"-->
+        <!--android:gravity="left"-->
+        <!--android:text="WeChat"-->
+        <!--android:textSize="16sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_pkg_name"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignLeft="@id/tv_app_name"-->
+        <!--android:layout_below="@id/tv_app_name"-->
+        <!--android:gravity="left"-->
+        <!--android:text="包名："-->
+        <!--android:textSize="12sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_md5"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignLeft="@id/tv_pkg_name"-->
+        <!--android:layout_below="@id/tv_pkg_name"-->
+        <!--android:gravity="left"-->
+        <!--android:text="MD5："-->
+        <!--android:textSize="12sp" />-->
+
+</RelativeLayout>
