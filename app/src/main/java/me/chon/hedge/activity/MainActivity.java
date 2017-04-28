@@ -150,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements PullRecycler.OnRe
 //            ApplicationInfo appInfo = packageInfo.applicationInfo;
 //            if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
 //
-//
 //            }
 //        }
 
@@ -164,7 +163,8 @@ public class MainActivity extends AppCompatActivity implements PullRecycler.OnRe
         }).filter(new Predicate<PackageInfo>() {
             @Override
             public boolean test(PackageInfo packageInfo) throws Exception {
-                return (packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0;
+//                return (packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0;
+                return true;
             }
         }).subscribe(new Observer<PackageInfo>() {
             @Override

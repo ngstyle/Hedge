@@ -3,10 +3,12 @@ package me.nohc;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic;
 
 /**
  * Created by chon on 2017/4/27.
@@ -22,13 +24,12 @@ public class ProxyInfo {
 
     public static final String PROXY = "ViewInject";
 
-    public ProxyInfo(Elements elementUtils, TypeElement classElement) {
+    private ProcessingEnvironment processingEnv;
+    public ProxyInfo(ProcessingEnvironment processingEnv, TypeElement classElement) {
+        this.processingEnv = processingEnv;
         this.typeElement = classElement;
-        PackageElement packageElement = elementUtils.getPackageOf(classElement);
+        PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(classElement);
         String packageName = packageElement.getQualifiedName().toString();
-
-//        String[] split = classElement.getQualifiedName().toString().split(".");
-//        String name = split[split.length - 1];
 
         // classname
         String className = ClassValidator.getClassName(classElement, packageName);
@@ -41,7 +42,6 @@ public class ProxyInfo {
         StringBuilder builder = new StringBuilder();
         builder.append("// Generated code. Do not modify!\n");
         builder.append("package ").append(packageName).append(";\n\n");
-        // TODO
         builder.append("import me.nohc.*;\n");
         builder.append('\n');
 

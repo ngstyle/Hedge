@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
@@ -20,30 +17,18 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 @AutoService(Processor.class)
 public class NohcProcessor extends AbstractProcessor {
 
-    private Elements elementUtils;
-    private Filer filer;
-    private Messager messager;
-
     private Map<String, ProxyInfo> mProxyMap = new HashMap<>();
 
-    @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
-        elementUtils = processingEnv.getElementUtils();
-        filer = processingEnv.getFiler();
-        messager = processingEnv.getMessager();
-    }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        messager.printMessage(Diagnostic.Kind.ERROR , "nohc process...");
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "process...");
         mProxyMap.clear();
 
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Bind.class);
@@ -51,13 +36,12 @@ public class NohcProcessor extends AbstractProcessor {
             checkAnnotationValid(element, Bind.class);
 
             VariableElement variableElement = (VariableElement) element;
-            // 拿到对应的类信息TypeElement
             TypeElement typeElement = (TypeElement) variableElement.getEnclosingElement();
 
             String qualifiedName = typeElement.getQualifiedName().toString();
             ProxyInfo proxyInfo = mProxyMap.get(qualifiedName);
             if (proxyInfo == null) {
-                proxyInfo = new ProxyInfo(elementUtils, typeElement);
+                proxyInfo = new ProxyInfo(processingEnv, typeElement);
                 mProxyMap.put(qualifiedName, proxyInfo);
             }
 
@@ -69,14 +53,19 @@ public class NohcProcessor extends AbstractProcessor {
         for (String key : mProxyMap.keySet()) {
             ProxyInfo proxyInfo = mProxyMap.get(key);
             try {
-                JavaFileObject jfo = filer.createSourceFile(proxyInfo.getProxyClassFullName(), proxyInfo.getTypeElement());
+                JavaFileObject jfo = processingEnv.getFiler().createSourceFile(
+                        proxyInfo.getProxyClassFullName(),
+                        proxyInfo.getTypeElement());
                 Writer writer = jfo.openWriter();
                 writer.write(proxyInfo.generateJavaCode());
                 writer.flush();
                 writer.close();
             } catch (IOException e) {
-                error(proxyInfo.getTypeElement(), "Unable to write injector for type %s: %s", proxyInfo.getTypeElement(), e.getMessage());
+                error(proxyInfo.getTypeElement(),
+                        "Unable to write injector for type %s: %s",
+                        proxyInfo.getTypeElement(), e.getMessage());
             }
+
         }
 
         return true;
@@ -100,7 +89,7 @@ public class NohcProcessor extends AbstractProcessor {
         if (args.length > 0) {
             message = String.format(message, args);
         }
-        messager.printMessage(Diagnostic.Kind.NOTE, message, element);
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message, element);
     }
 
     @Override
@@ -112,6 +101,6 @@ public class NohcProcessor extends AbstractProcessor {
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
+        return SourceVersion.RELEASE_7;
     }
 }

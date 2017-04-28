@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import me.nohc.Bind;
+import me.nohc.ViewInjector;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -22,10 +23,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
 
-//        ViewInjector.injectView(this);
-//
-//        mTv.setText("ViewInject");
-//        mBtn.setText("ViewInject ~");
+        ViewInjector.injectView(this);
+
+        mTv.setText("ViewInject");
+        mBtn.setText("ViewInject ~");
 
     }
 

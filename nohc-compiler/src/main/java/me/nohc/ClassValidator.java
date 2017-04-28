@@ -17,6 +17,7 @@ final class ClassValidator {
 
     static String getClassName(TypeElement type, String packageName) {
         int packageLen = packageName.length() + 1;
+        // maybe inner class
         return type.getQualifiedName().toString().substring(packageLen).replace('.', '$');
     }
 }

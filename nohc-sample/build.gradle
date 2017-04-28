@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
@@ -32,6 +31,5 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     compile project(':nohc-api')
-//    annotationProcessor project(':nohc-compiler')
-    apt project(':nohc-compiler')
+    annotationProcessor project(':nohc-compiler')
 }

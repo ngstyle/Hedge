@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -70,6 +72,7 @@ public class AppAdapter extends BaseListAdapter {
 //        TextView tv_pkg_name;
 //        TextView tv_md5;
 //        SparseArray<String> md5SparseArray;
+          Map<Integer,Drawable> drawableMap = new HashMap<>();
 
         AppHolder(View itemView, List<PackageInfo> data) {
             super(itemView);
@@ -90,7 +93,11 @@ public class AppAdapter extends BaseListAdapter {
             version.setText(packageInfo.versionName + "\n" + String.valueOf(packageInfo.versionCode));
 //            tv_pkg_name.setText(packageInfo.packageName);
 
-            Drawable drawable = packageInfo.applicationInfo.loadIcon(itemView.getContext().getPackageManager());
+            Drawable drawable = drawableMap.get(position);
+            if (drawable == null) {
+                drawable = packageInfo.applicationInfo.loadIcon(itemView.getContext().getPackageManager());
+                drawableMap.put(position,drawable);
+            }
             Glide.with(itemView.getContext()).load("").placeholder(drawable).into(logo);
 //            logo.setImageDrawable(drawable);
 
