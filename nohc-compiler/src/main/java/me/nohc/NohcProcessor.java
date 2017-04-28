@@ -53,13 +53,15 @@ public class NohcProcessor extends AbstractProcessor {
         for (String key : mProxyMap.keySet()) {
             ProxyInfo proxyInfo = mProxyMap.get(key);
             try {
-                JavaFileObject jfo = processingEnv.getFiler().createSourceFile(
-                        proxyInfo.getProxyClassFullName(),
-                        proxyInfo.getTypeElement());
-                Writer writer = jfo.openWriter();
-                writer.write(proxyInfo.generateJavaCode());
-                writer.flush();
-                writer.close();
+//                JavaFileObject jfo = processingEnv.getFiler().createSourceFile(
+//                        proxyInfo.getProxyClassFullName(),
+//                        proxyInfo.getTypeElement());
+//                Writer writer = jfo.openWriter();
+//                writer.write(proxyInfo.generateJavaCode());
+//                writer.flush();
+//                writer.close();
+
+                proxyInfo.generateJavaCode();
             } catch (IOException e) {
                 error(proxyInfo.getTypeElement(),
                         "Unable to write injector for type %s: %s",

@@ -1,9 +1,18 @@
 package me.nohc;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -38,21 +47,74 @@ public class ProxyInfo {
     }
 
 
-    public String generateJavaCode() {
+    public String generateJavaCode() throws IOException {
+//        StringBuilder builder = new StringBuilder();
+//        builder.append("// Generated code. Do not modify!\n");
+//        builder.append("package ").append(packageName).append(";\n\n");
+//        builder.append("import me.nohc.*;\n");
+//        builder.append('\n');
+//
+//        builder.append("public class ").append(proxyClassName).append(" implements " + ProxyInfo.PROXY + "<" + typeElement.getQualifiedName() + ">");
+//        builder.append(" {\n");
+//
+//        generateMethods(builder);
+//        builder.append('\n');
+//
+//        builder.append("}\n");
+
+//        VariableElement element = injectVariables.get(id);
+//        String name = element.getSimpleName().toString();
+//        String type = element.asType().toString();
+
+        //        return builder.toString();
+
         StringBuilder builder = new StringBuilder();
-        builder.append("// Generated code. Do not modify!\n");
-        builder.append("package ").append(packageName).append(";\n\n");
-        builder.append("import me.nohc.*;\n");
-        builder.append('\n');
+        for (int id : injectVariables.keySet()) {
+            VariableElement element = injectVariables.get(id);
+            String name = element.getSimpleName().toString();
+            String type = element.asType().toString();
+            builder.append(" if(source instanceof android.app.Activity){\n");
+            builder.append("host." + name).append(" = ");
+            builder.append("(" + type + ")(((android.app.Activity)source).findViewById( " + id + "));\n");
+            builder.append("\n}else{\n");
+            builder.append("host." + name).append(" = ");
+            builder.append("(" + type + ")(((android.view.View)source).findViewById( " + id + "));\n");
+            builder.append("\n};");
+        }
 
-        builder.append("public class ").append(proxyClassName).append(" implements " + ProxyInfo.PROXY + "<" + typeElement.getQualifiedName() + ">");
-        builder.append(" {\n");
+        MethodSpec methodSpec = MethodSpec.methodBuilder("inject")
+                .addAnnotation(Override.class)
+                .addParameter(TypeName.get(typeElement.asType()),"host")
+                .addParameter(TypeName.get(Object.class),"source")
+                .addModifiers(Modifier.PUBLIC)
 
-        generateMethods(builder);
-        builder.append('\n');
 
-        builder.append("}\n");
-        return builder.toString();
+                .addCode(builder.toString())
+//                .beginControlFlow("if(source instanceof android.app.Activity)")
+//                .addStatement("$T.out.println($S)", System.class, "Hello, Nohc!")
+//                .endControlFlow()
+//
+//                .beginControlFlow("else")
+//                .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
+//                .endControlFlow()
+
+
+                .returns(void.class)
+                .build();
+
+        // generic
+        ParameterizedTypeName parameterizedTypeName = ParameterizedTypeName.get(ClassName.get("me.nohc", "ViewInject"), TypeName.get(typeElement.asType()));
+
+        TypeSpec typeSpec = TypeSpec.classBuilder(proxyClassName)
+                .addModifiers(Modifier.PUBLIC)
+                .addSuperinterface(parameterizedTypeName)
+                .addMethod(methodSpec)
+                .build();
+
+        JavaFile javaFile = JavaFile.builder(packageName, typeSpec).build();
+        javaFile.writeTo(processingEnv.getFiler());
+
+        return null;
 
     }
 
