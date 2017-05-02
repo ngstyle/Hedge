@@ -3,7 +3,6 @@ package me.nohc;
 import com.google.auto.service.AutoService;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -18,7 +17,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 
 @AutoService(Processor.class)
 public class NohcProcessor extends AbstractProcessor {

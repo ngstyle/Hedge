@@ -16,8 +16,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic;
 
 /**
  * Created by chon on 2017/4/27.
@@ -68,39 +66,29 @@ public class ProxyInfo {
 
         //        return builder.toString();
 
-        StringBuilder builder = new StringBuilder();
-        for (int id : injectVariables.keySet()) {
-            VariableElement element = injectVariables.get(id);
-            String name = element.getSimpleName().toString();
-            String type = element.asType().toString();
-            builder.append(" if(source instanceof android.app.Activity){\n");
-            builder.append("host." + name).append(" = ");
-            builder.append("(" + type + ")(((android.app.Activity)source).findViewById( " + id + "));\n");
-            builder.append("\n}else{\n");
-            builder.append("host." + name).append(" = ");
-            builder.append("(" + type + ")(((android.view.View)source).findViewById( " + id + "));\n");
-            builder.append("\n};");
-        }
-
-        MethodSpec methodSpec = MethodSpec.methodBuilder("inject")
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("inject")
                 .addAnnotation(Override.class)
                 .addParameter(TypeName.get(typeElement.asType()),"host")
                 .addParameter(TypeName.get(Object.class),"source")
                 .addModifiers(Modifier.PUBLIC)
+                .returns(void.class);
+
+        for (int id : injectVariables.keySet()) {
+            VariableElement element = injectVariables.get(id);
+            String name = element.getSimpleName().toString();
+            String type = element.asType().toString();
+
+            builder.beginControlFlow("if(source instanceof android.app.Activity)");
+            builder.addStatement("host." + name + " = " + "(" + type + ")(((android.app.Activity)source).findViewById( " + id + "))");
+            builder.endControlFlow();
+
+            builder.beginControlFlow("else");
+            builder.addStatement("host." + name + " = " + "(" + type + ")(((android.view.View)source).findViewById( " + id + "))");
+            builder.endControlFlow();
+        }
 
 
-                .addCode(builder.toString())
-//                .beginControlFlow("if(source instanceof android.app.Activity)")
-//                .addStatement("$T.out.println($S)", System.class, "Hello, Nohc!")
-//                .endControlFlow()
-//
-//                .beginControlFlow("else")
-//                .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
-//                .endControlFlow()
-
-
-                .returns(void.class)
-                .build();
+        MethodSpec methodSpec = builder.build();
 
         // generic
         ParameterizedTypeName parameterizedTypeName = ParameterizedTypeName.get(ClassName.get("me.nohc", "ViewInject"), TypeName.get(typeElement.asType()));
